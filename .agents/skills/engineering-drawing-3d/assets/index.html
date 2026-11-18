@@ -1,0 +1,138 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="color-scheme" content="light">
+<title>工程制图 · 交互演示</title>
+<style>/* INLINE_STYLE */</style>
+</head>
+<body>
+<header class="topbar">
+  <div class="top-inner">
+    <a href="#q1" class="brand" aria-label="工程制图，返回第 1 题">
+      <svg viewBox="0 0 42 42" aria-hidden="true"><rect width="42" height="42" rx="10" fill="currentColor"/><path d="m21 8 11 6.5v13L21 34l-11-6.5v-13l11-6.5Zm0 13v13m-11-19.5L21 21l11-6.5M15.5 11.3l11 6.5v5.3" stroke="#edfbf6" stroke-width="1.55" fill="none" stroke-linecap="round" stroke-linejoin="round"/></svg>
+      <span>工程制图<span class="brand-divider"></span><small>交互演示</small></span>
+    </a>
+    <span class="offline"><span aria-hidden="true"></span>离线答题演示</span>
+  </div>
+</header>
+<main>
+  <section class="introduction" aria-labelledby="main-title">
+    <div>
+      <h1 id="main-title">工程制图演示</h1>
+      <p>对照题目原图、完成后的投影图与可交互立体模型。</p>
+    </div>
+    <div class="source-tag"></div>
+  </section>
+  <nav id="questions" aria-label="选择题号"></nav>
+  <section class="question" aria-labelledby="question-title">
+    <header class="question-header">
+      <span id="question-code" class="question-code"></span>
+      <div>
+        <h2 id="question-title" tabindex="-1"></h2>
+        <p id="question-prompt"></p>
+      </div>
+    </header>
+    <div class="workspace">
+      <article class="panel drawing-panel" aria-labelledby="drawing-title">
+        <header class="panel-header">
+          <div><h3 id="drawing-title">二维图纸</h3><p>按题面投影关系排布</p></div>
+          <div class="drawing-actions">
+            <div class="segmented" role="group" aria-label="切换图纸">
+              <button type="button" data-sheet="answer" aria-pressed="true">参考答案</button>
+              <button type="button" data-sheet="source" aria-pressed="false">题目原图</button>
+            </div>
+            <button type="button" class="icon-button expand" id="expand-drawing" title="放大图纸" aria-label="放大图纸">
+              <svg aria-hidden="true" viewBox="0 0 24 24"><path d="M9 4H4v5m11-5h5v5M4 15v5h5m11-5v5h-5"/></svg>
+            </button>
+          </div>
+        </header>
+        <div class="sheet" id="sheet">
+          <div id="drawing"><img id="answer-image" alt=""></div>
+          <img id="source-image" alt="" hidden>
+        </div>
+        <div class="legend" id="legend" aria-label="图纸线型">
+          <span><i class="sample ink-sample"></i>可见线</span>
+          <span><i class="sample dash-sample"></i>不可见线</span>
+          <span><i class="sample chain-sample"></i>中心线</span>
+          <span><i class="sample added-sample"></i><span id="added-meaning">补画内容</span></span>
+        </div>
+      </article>
+      <article class="panel model-panel" aria-labelledby="model-title">
+        <header class="panel-header">
+          <div><h3 id="model-title">立体模型</h3><p>点击下方视角可与图纸对照</p></div>
+          <span id="view-title" class="view-title">轴测视角</span>
+        </header>
+        <div class="stage" id="stage">
+          <canvas id="software-canvas" aria-hidden="true" hidden></canvas>
+          <canvas id="viewport" tabindex="0" aria-label="可旋转、平移和缩放的立体模型" aria-describedby="model-help">
+            交互式立体模型。下方提供视角、缩放和复位按钮。
+          </canvas>
+          <span id="model-status" role="status">正在载入模型…</span>
+          <svg id="axis" viewBox="0 0 72 72" aria-hidden="true"></svg>
+          <div class="stage-tools" role="group" aria-label="缩放与平移">
+            <button type="button" class="icon-button" data-zoom="1.2" title="放大" aria-label="放大模型">
+              <svg aria-hidden="true" viewBox="0 0 24 24"><path d="M5 12h14M12 5v14"/></svg>
+            </button>
+            <button type="button" class="icon-button" data-zoom="0.833333333" title="缩小" aria-label="缩小模型">
+              <svg aria-hidden="true" viewBox="0 0 24 24"><path d="M5 12h14"/></svg>
+            </button>
+            <button type="button" class="icon-button" id="pan" title="拖动平移" aria-label="切换平移模式" aria-pressed="false">
+              <svg aria-hidden="true" viewBox="0 0 24 24"><path d="M12 3v18M3 12h18m-12-6 3-3 3 3m-6 12 3 3 3-3m-9-9-3 3 3 3m12-6 3 3-3 3"/></svg>
+            </button>
+            <button type="button" class="icon-button" id="reset" title="复位" aria-label="复位模型">
+              <svg aria-hidden="true" viewBox="0 0 24 24"><path d="M4 11a8 8 0 1 1 2.3 6.6M4 5v6h6"/></svg>
+            </button>
+          </div>
+        </div>
+        <div class="camera-controls">
+          <div class="views" role="group" aria-label="模型视角">
+            <button type="button" data-view="iso" aria-pressed="true">轴测</button>
+            <button type="button" data-view="front" aria-pressed="false">主视</button>
+            <button type="button" data-view="top" aria-pressed="false">俯视</button>
+            <button type="button" data-view="left" aria-pressed="false">左视</button>
+          </div>
+          <div class="sections" id="sections" role="group" aria-label="剖切模型" hidden></div>
+          <p id="model-help">拖动旋转 · 右键拖动平移 · 滚轮缩放 · 触屏可双指操作</p>
+          <details class="keyboard">
+            <summary>键盘与平移操作</summary>
+            <p>聚焦模型后，方向键旋转，Shift + 方向键平移，+ / − 缩放，0 复位。</p>
+            <div class="nudge" role="group" aria-label="平移模型">
+              <button type="button" data-pan="-25,0">左移</button><button type="button" data-pan="25,0">右移</button>
+              <button type="button" data-pan="0,-25">上移</button><button type="button" data-pan="0,25">下移</button>
+            </div>
+          </details>
+        </div>
+      </article>
+    </div>
+    <section class="notes" aria-labelledby="notes-title">
+      <h3 id="notes-title">作图要点</h3>
+      <ol id="solution-notes"></ol>
+      <p class="reading-note" id="reading-note" hidden></p>
+    </section>
+  </section>
+  <footer>
+    <span>工程制图 · 本地交互演示</span>
+    <span>模型按题图重建</span>
+  </footer>
+</main>
+<dialog id="drawing-dialog" aria-labelledby="dialog-title">
+  <header class="panel-header">
+    <h3 id="dialog-title">放大图纸</h3>
+    <div class="dialog-actions">
+      <button type="button" id="dialog-smaller" aria-label="缩小图纸">−</button>
+      <button type="button" id="dialog-larger" aria-label="放大图纸">+</button>
+      <form method="dialog"><button type="submit">关闭</button></form>
+    </div>
+  </header>
+  <div id="dialog-sheet"><div id="dialog-content"></div></div>
+</dialog>
+<script>
+const meshData = /* INLINE_MESHES */ null;
+const project = /* INLINE_PROJECT */ null;
+/* INLINE_VIEWER */
+/* INLINE_APP */
+</script>
+</body>
+</html>
